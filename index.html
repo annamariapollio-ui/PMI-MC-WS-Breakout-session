@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MC Acquisition Workshop — Breakout Canvases</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #5B4BCC;
+  --purple-light: #EBE8FF;
+  --purple-mid: #C4BCFF;
+  --teal: #00A878;
+  --teal-light: #D6F5EC;
+  --teal-mid: #7DDFC0;
+  --amber: #E07B00;
+  --amber-light: #FFF0D6;
+  --amber-mid: #FFCC7A;
+  --coral: #D94F2E;
+  --coral-light: #FDEAE5;
+  --gray: #3A3A3A;
+  --gray-mid: #888;
+  --gray-light: #F5F4F1;
+  --border: #E0DDD8;
+  --white: #FFFFFF;
+  --ink: #1A1A1A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #EFEDE8;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ─── TABS ─────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  padding: 24px 32px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #EFEDE8;
+}
+
+.tab-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 22px;
+  border: 1.5px solid var(--border);
+  border-bottom: none;
+  background: #E0DDD8;
+  color: var(--gray-mid);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+  position: relative;
+  top: 1px;
+}
+.tab-btn:hover { background: #F0EDE8; color: var(--ink); }
+.tab-btn.active {
+  background: var(--white);
+  color: var(--ink);
+  border-color: var(--border);
+  font-weight: 600;
+}
+.tab-btn.t1.active { border-top: 3px solid var(--purple); }
+.tab-btn.t2.active { border-top: 3px solid var(--teal); }
+.tab-btn.t3.active { border-top: 3px solid var(--amber); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── PAGE WRAPPER ──────────────────────────────── */
+.page {
+  background: var(--white);
+  margin: 0 32px 48px;
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 12px 12px 12px;
+  padding: 48px 52px;
+  min-height: 900px;
+}
+
+/* ─── HEADER ────────────────────────────────────── */
+.page-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 24px;
+  padding-bottom: 28px;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 36px;
+}
+.header-left {}
+.breakout-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.badge-purple { background: var(--purple-light); color: var(--purple); }
+.badge-teal   { background: var(--teal-light);   color: #006B4D; }
+.badge-amber  { background: var(--amber-light);  color: var(--amber); }
+
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  line-height: 1.15;
+  color: var(--ink);
+  max-width: 560px;
+}
+.challenge-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+.challenge-text {
+  font-size: 14px;
+  color: #555;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* Participants block */
+.participants-block {
+  background: var(--gray-light);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 240px;
+}
+.part-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 10px;
+}
+.part-list { display: flex; flex-direction: column; gap: 5px; }
+.part-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.part-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-purple { background: var(--purple); }
+.dot-teal   { background: var(--teal); }
+.dot-amber  { background: var(--amber); }
+.part-country { font-size: 11px; color: var(--gray-mid); }
+
+.facilitators {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.fac-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 6px;
+}
+.fac-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.fac-pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--ink);
+  color: var(--white);
+}
+
+/* ─── CANVAS GRID ───────────────────────────────── */
+.canvas-grid {
+  display: grid;
+  gap: 20px;
+}
+.grid-3col { grid-template-columns: repeat(3, 1fr); }
+.grid-2col { grid-template-columns: repeat(2, 1fr); }
+.grid-4col { grid-template-columns: repeat(4, 1fr); }
+.grid-3-1  { grid-template-columns: 3fr 1fr; }
+.grid-5stages { grid-template-columns: repeat(5, 1fr); }
+
+/* ─── CANVAS SECTION ────────────────────────────── */
+.section-heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--white);
+}
+.num-purple { background: var(--purple); }
+.num-teal   { background: var(--teal); }
+.num-amber  { background: var(--amber); }
+
+/* ─── CANVAS ZONE (post-it area) ────────────────── */
+.zone {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  position: relative;
+  background: var(--white);
+}
+.zone-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.zone-sub {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* post-it placeholder grid */
+.postit-grid {
+  display: grid;
+  gap: 8px;
+}
+.postit-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.postit-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.postit-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.postit {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 6px;
+  min-height: 72px;
+}
+.postit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  opacity: 0.12;
+}
+.postit-yellow  { background: #FFF5A0; box-shadow: 2px 2px 0 #E8DC6A; }
+.postit-pink    { background: #FFB5C8; box-shadow: 2px 2px 0 #E87A96; }
+.postit-blue    { background: #B5D8FF; box-shadow: 2px 2px 0 #7AAEE8; }
+.postit-green   { background: #B5F0D0; box-shadow: 2px 2px 0 #6DD4A2; }
+.postit-orange  { background: #FFD0A0; box-shadow: 2px 2px 0 #E8A060; }
+.postit-lavender{ background: #D8C8FF; box-shadow: 2px 2px 0 #A890E8; }
+
+.postit-hint {
+  font-size: 9.5px;
+  color: rgba(0,0,0,0.35);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* filled postit (pre-seeded content) */
+.postit-filled {
+  border-radius: 2px;
+  padding: 8px;
+  min-height: 72px;
+  display: flex;
+  align-items: flex-start;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: rgba(0,0,0,0.65);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  position: relative;
+}
+.postit-filled::after {
+  content: '★';
+  position: absolute;
+  bottom: 5px; right: 6px;
+  font-size: 9px;
+  opacity: 0.25;
+}
+.pf-yellow   { background: #FFF5A0; }
+.pf-green    { background: #B5F0D0; }
+.pf-blue     { background: #B5D8FF; }
+.pf-orange   { background: #FFD0A0; }
+.pf-lavender { background: #D8C8FF; }
+.pf-pink     { background: #FFB5C8; }
+
+/* ─── MATRIX TABLE ──────────────────────────────── */
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.matrix-table th {
+  background: var(--gray-light);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+  color: #555;
+}
+.matrix-table td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  vertical-align: top;
+}
+.matrix-table .row-header {
+  background: var(--gray-light);
+  font-weight: 600;
+  font-size: 11px;
+}
+.matrix-table .postit-cell {
+  background: #FFFEF5;
+  min-height: 56px;
+}
+
+/* ─── ACCENT BARS ───────────────────────────────── */
+.accent-purple { border-left: 4px solid var(--purple); padding-left: 14px; }
+.accent-teal   { border-left: 4px solid var(--teal);   padding-left: 14px; }
+.accent-amber  { border-left: 4px solid var(--amber);  padding-left: 14px; }
+
+/* ─── FUNNEL FLOW ───────────────────────────────── */
+.funnel-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.funnel-stage {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  padding: 14px 12px;
+  position: relative;
+  background: var(--white);
+}
+.funnel-stage:first-child { border-radius: 10px 0 0 10px; }
+.funnel-stage:last-child  { border-radius: 0 10px 10px 0; border-right: 1.5px solid var(--border); }
+.funnel-stage + .funnel-stage { border-left: none; }
+
+.funnel-arrow {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 14px solid var(--border);
+  z-index: 2;
+}
+.funnel-arrow::before {
+  content: '';
+  position: absolute;
+  right: 3px; top: -11px;
+  width: 0; height: 0;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-left: 13px solid var(--white);
+}
+
+.funnel-stage-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid;
+}
+.fl-generate  { color: #006B4D; border-color: var(--teal); }
+.fl-qualify   { color: var(--purple); border-color: var(--purple); }
+.fl-enrich    { color: var(--amber); border-color: var(--amber); }
+.fl-engage    { color: var(--coral); border-color: var(--coral); }
+.fl-convert   { color: #3A3A3A; border-color: #888; }
+
+/* ─── LEAKAGE LIST ───────────────────────────────── */
+.leak-list { display: flex; flex-direction: column; gap: 6px; }
+.leak-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px dashed var(--border);
+  font-size: 11.5px;
+  color: #555;
+}
+.leak-circle {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── INSIGHT BOX ───────────────────────────────── */
+.insight {
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+.insight-purple { background: var(--purple-light); color: #3A2FA0; border-left: 3px solid var(--purple); }
+.insight-teal   { background: var(--teal-light);   color: #005E44; border-left: 3px solid var(--teal); }
+.insight-amber  { background: var(--amber-light);  color: #8A4D00; border-left: 3px solid var(--amber); }
+
+.insight strong { font-weight: 600; }
+
+/* ─── SECTION DIVIDER ───────────────────────────── */
+.section-divider {
+  border: none;
+  border-top: 1.5px solid var(--border);
+  margin: 28px 0;
+}
+
+/* ─── PRINT ─────────────────────────────────────── */
+@media print {
+  body { background: white; }
+  .tab-bar { display: none; }
+  .tab-content { display: block !important; }
+  .page {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    padding: 32px 40px;
+    page-break-after: always;
+    min-height: unset;
+  }
+  .page-title { font-size: 30px; }
+}
+
+/* ─── FOOTER ────────────────────────────────────── */
+.page-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: #aaa;
+  letter-spacing: 0.05em;
+}
+.mc-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--purple);
+  letter-spacing: -0.02em;
+}
+.print-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1.5px solid var(--ink);
+  background: var(--ink);
+  color: var(--white);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.print-btn:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ TAB BAR ═══════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn t1 active" onclick="showTab('t1',this)">Breakout 1 — MC Navigation</button>
+  <button class="tab-btn t2" onclick="showTab('t2',this)">Breakout 2 — LAMPs &amp; Events</button>
+  <button class="tab-btn t3" onclick="showTab('t3',this)">Breakout 3 — Lead Journey</button>
+  <button class="print-btn" style="margin-left:auto;margin-bottom:4px;" onclick="window.print()">🖨 Print all</button>
+</div>
+
+
+<!-- ═══════════════════════ BREAKOUT 1 ═══════════════════════ -->
+<div id="t1" class="tab-content active">
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <span class="breakout-badge badge-purple">Breakout 1 — Phase 1</span>
+      <h1 class="page-title">MC Navigation: Which Category, to Whom, When &amp; Where</h1>
+      <div class="challenge-label">The Challenge</div>
+      <p class="challenge-text">Three categories, one shot to get it right. How do we build a shared logic for who gets what, through which channel, and at which moment?</p>
+    </div>
+    <div class="participants-block">
+      <div class="part-label">Participants</div>
+      <div class="part-list">
+        <div class="part-item"><span class="part-dot dot-purple"></span>Andrzej Domeracki <span class="part-country">— Spain</span></div>
+        <div class="part-item"><span class="part-dot dot-purple"></span>Marco Stefanetti <span class="part-country">— Austria</span></div>
+        <div class="part-item"><span class="part-dot dot-purple"></span>Anca Predoiu <span class="part-country">— Romania</span></div>
+        <div class="part-item"><span class="part-dot dot-purple"></span>Mohssine Akram <span class="part-country">— Morocco</span></div>
+        <div class="part-item"><span class="part-dot dot-purple"></span>Pawel Kosakowski <span class="part-country">— Regional SME</span></div>
+        <div class="part-item"><span class="part-dot dot-purple"></span>Hady Gamaleldin <span class="part-country">— Egypt</span></div>
+      </div>
+      <div class="facilitators">
+        <div class="fac-label">Facilitators</div>
+        <div class="fac-pills">
+          <span class="fac-pill">Carine Friou</span>
+          <span class="fac-pill">Marta Kobylecka</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="section-heading" style="color: var(--purple)">
+    <span class="step-num num-purple">1</span>
+    DEFINE YOUR MC TARGET AUDIENCES — Who are the switcher profiles in your market?
+  </div>
+  <div class="canvas-grid grid-3col" style="margin-bottom:20px;">
+
+    <div class="zone" style="border-color: var(--purple-mid); background: #FAFAFE;">
+      <div class="zone-label" style="color:var(--purple)">Audience A — IQOS → VEEV</div>
+      <div class="zone-sub">How does your market define this consumer? What's their trigger?</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit-filled pf-yellow">CC dual user seeking flavour variety</div>
+        <div class="postit-filled pf-lavender">Lifestyle / discreet use occasions</div>
+        <div class="postit postit-yellow"><span class="postit-hint">Add your market's signal...</span></div>
+        <div class="postit postit-yellow"><span class="postit-hint">Add your market's signal...</span></div>
+      </div>
+      <div class="insight insight-purple" style="margin-top:10px;"><strong>Morocco:</strong> Most CC users are dual users — VEEV entry via flavour promise</div>
+    </div>
+
+    <div class="zone" style="border-color: var(--teal-mid); background: #FAFEFC;">
+      <div class="zone-label" style="color:var(--teal)">Audience B — CC → ZYN / P5</div>
+      <div class="zone-sub">Who is the P5 target in your market? What need does it solve?</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit-filled pf-green">Discreet / on-the-go need</div>
+        <div class="postit-filled pf-green">Modern, urban identity</div>
+        <div class="postit postit-green"><span class="postit-hint">Add your market's signal...</span></div>
+        <div class="postit postit-green"><span class="postit-hint">Add your market's signal...</span></div>
+      </div>
+      <div class="insight insight-teal"><strong>Romania:</strong> "Experience Explorers" vs "Tobacco Progressives" drive different category entry paths</div>
+    </div>
+
+    <div class="zone" style="border-style: dashed;">
+      <div class="zone-label" style="color:#aaa">Audience C — Your Market's Segment</div>
+      <div class="zone-sub">Define a specific MC audience unique to your market context</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-pink"><span class="postit-hint">Audience definition...</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">What's the trigger?</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">Key data signal...</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">Channel they're on...</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Step 2 -->
+  <div class="section-heading" style="color: var(--purple)">
+    <span class="step-num num-purple">2</span>
+    CATEGORY DECISION MATRIX — Which category first, for whom, through which channel?
+  </div>
+  <table class="matrix-table" style="margin-bottom:16px;">
+    <thead>
+      <tr>
+        <th style="width:18%">Audience</th>
+        <th style="width:16%">First category &amp; why</th>
+        <th style="width:20%">Entry message / hook</th>
+        <th style="width:18%">Second category? When?</th>
+        <th style="width:18%">Best channel</th>
+        <th style="width:10%">Key barrier</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-header">IQOS → VEEV</td>
+        <td class="postit-cell" style="background:#FFFEF5;">
+          <div class="postit-filled pf-yellow" style="min-height:40px;font-size:10.5px;">IQOS first — known brand, trust established</div>
+        </td>
+        <td class="postit-cell"><div class="postit postit-yellow" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Add your message...</span></div></td>
+        <td class="postit-cell"><div class="postit postit-lavender" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">After X touchpoints?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-blue" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Brand retail / LAMP?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-pink" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Barrier?</span></div></td>
+      </tr>
+      <tr>
+        <td class="row-header">CC → ZYN / P5</td>
+        <td class="postit-cell"><div class="postit postit-green" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">First category?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-green" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Add your message...</span></div></td>
+        <td class="postit-cell"><div class="postit postit-yellow" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Bridge to IQOS?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-blue" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">BoTG / CRM?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-pink" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Barrier?</span></div></td>
+      </tr>
+      <tr>
+        <td class="row-header">Your segment</td>
+        <td class="postit-cell"><div class="postit postit-orange" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">First category?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-orange" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Add your message...</span></div></td>
+        <td class="postit-cell"><div class="postit postit-orange" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Second step?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-orange" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Channel?</span></div></td>
+        <td class="postit-cell"><div class="postit postit-pink" style="min-height:40px;aspect-ratio:unset;"><span class="postit-hint">Barrier?</span></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="section-divider">
+
+  <!-- Step 3 -->
+  <div class="section-heading" style="color: var(--purple)">
+    <span class="step-num num-purple">3</span>
+    BIGGEST PAIN POINT &amp; ONE THING WE COULD PILOT
+  </div>
+  <div class="canvas-grid grid-3col">
+    <div class="zone accent-purple">
+      <div class="zone-label" style="color:var(--purple)">Our biggest MC navigation pain</div>
+      <div class="zone-sub">What breaks the most in your market today?</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-pink"><span class="postit-hint">Pain point 1</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">Pain point 2</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">Pain point 3</span></div>
+        <div class="postit postit-pink"><span class="postit-hint">Pain point 4</span></div>
+      </div>
+    </div>
+    <div class="zone accent-purple">
+      <div class="zone-label" style="color:var(--purple)">What we have tried</div>
+      <div class="zone-sub">Failed experiments worth sharing with the group</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-lavender"><span class="postit-hint">Tried &amp; learned...</span></div>
+        <div class="postit postit-lavender"><span class="postit-hint">Tried &amp; learned...</span></div>
+        <div class="postit postit-lavender"><span class="postit-hint">Tried &amp; learned...</span></div>
+        <div class="postit postit-lavender"><span class="postit-hint">Tried &amp; learned...</span></div>
+      </div>
+    </div>
+    <div class="zone" style="border-color:var(--purple);background:var(--purple-light);">
+      <div class="zone-label" style="color:var(--purple)">⭐ One thing we could pilot in 90 days</div>
+      <div class="zone-sub">Concrete, testable, owned by someone in this room</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-yellow"><span class="postit-hint">Pilot idea + owner</span></div>
+        <div class="postit postit-yellow"><span class="postit-hint">KPI to measure</span></div>
+      </div>
+      <div style="font-size:10px;color:var(--purple);margin-top:10px;font-weight:600;">↑ This is your group's output commitment</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="mc-logo">MC</span>
+    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span>Breakout 1 of 3</span>
+  </div>
+</div>
+</div>
+
+
+<!-- ═══════════════════════ BREAKOUT 2 ═══════════════════════ -->
+<div id="t2" class="tab-content">
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <span class="breakout-badge badge-teal">Breakout 2 — Phase 1</span>
+      <h1 class="page-title">LAMPs &amp; Events: Beyond Brand Building &amp; Brand Desirability</h1>
+      <div class="challenge-label">The Challenge</div>
+      <p class="challenge-text">LAMPs and events are primarily about awareness and desirability — but how do we also capture the right leads and carry the momentum forward into acquisition?</p>
+    </div>
+    <div class="participants-block">
+      <div class="part-label">Participants</div>
+      <div class="part-list">
+        <div class="part-item"><span class="part-dot dot-teal"></span>Mohammed Emara <span class="part-country">— Egypt</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Imane Bennouna <span class="part-country">— Morocco</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Nikola Cvetkovic <span class="part-country">— Romania</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Marianna Cherubini <span class="part-country">— Spain</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Titika Dimakopoulou <span class="part-country">— Greece</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Karen Vazquez <span class="part-country">— Mexico</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>Jordan Guzman <span class="part-country">— Region 4</span></div>
+        <div class="part-item"><span class="part-dot dot-teal"></span>George Chatzidakis <span class="part-country">— Regional SME</span></div>
+      </div>
+      <div class="facilitators">
+        <div class="fac-label">Facilitator</div>
+        <div class="fac-pills"><span class="fac-pill">Gihad Ashmawy</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Funnel mapping -->
+  <div class="section-heading" style="color: var(--teal)">
+    <span class="step-num num-teal">1</span>
+    MAP YOUR LAMP IN THE FUNNEL — Where does it sit today vs where it should?
+  </div>
+
+  <div class="funnel-flow" style="margin-bottom:16px;">
+    <div class="funnel-stage" style="background:#F5FEFA;">
+      <div class="funnel-stage-label fl-generate">Awareness</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;">What brand building does your LAMP / event deliver?</div>
+      <div class="postit postit-green" style="margin-bottom:6px;aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Visibility / reach...</span></div>
+      <div class="postit postit-green" style="aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Lifestyle / desire...</span></div>
+      <div class="funnel-arrow"></div>
+    </div>
+    <div class="funnel-stage" style="background:#FAFAFE;">
+      <div class="funnel-stage-label fl-qualify">Lead Capture</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;">How do you capture leads at or after the event?</div>
+      <div class="postit-filled pf-lavender" style="margin-bottom:6px;min-height:52px;font-size:10.5px;">Registration at touchpoint</div>
+      <div class="postit postit-lavender" style="aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Add mechanic...</span></div>
+      <div class="funnel-arrow"></div>
+    </div>
+    <div class="funnel-stage" style="background:#FFFDF5;">
+      <div class="funnel-stage-label fl-enrich">Nurture</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;">What follow-up happens after the LAMP?</div>
+      <div class="postit postit-orange" style="margin-bottom:6px;aspect-ratio:unset;min-height:52px;"><span class="postit-hint">CRM journey?</span></div>
+      <div class="postit postit-orange" style="aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Coach outreach?</span></div>
+      <div class="funnel-arrow"></div>
+    </div>
+    <div class="funnel-stage" style="background:#FFF5F4;">
+      <div class="funnel-stage-label fl-engage">Trial booking</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;">How do you move from interest to a guided trial?</div>
+      <div class="postit postit-pink" style="margin-bottom:6px;aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Booking mechanic?</span></div>
+      <div class="postit postit-pink" style="aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Incentive used?</span></div>
+      <div class="funnel-arrow"></div>
+    </div>
+    <div class="funnel-stage" style="background:#FAFAFA;">
+      <div class="funnel-stage-label fl-convert">Convert</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;">What converts a LAMP lead to a buyer?</div>
+      <div class="postit postit-yellow" style="margin-bottom:6px;aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Conversion action?</span></div>
+      <div class="postit postit-yellow" style="aspect-ratio:unset;min-height:52px;"><span class="postit-hint">Time to convert?</span></div>
+    </div>
+  </div>
+
+  <div class="insight insight-teal">
+    <strong>Egypt benchmark:</strong> "Engagement Hub" — leads enter a gamified raffle, engage with content, then are directed to a physical touchpoint to collect reward. Face-to-face conversion is strong once reached. The gap: getting leads to take that first physical step.
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Step 2: Where leads leak -->
+  <div class="section-heading" style="color: var(--teal)">
+    <span class="step-num num-teal">2</span>
+    WHERE DO LEADS LEAK? — Flag each gap in your market
+  </div>
+  <div class="canvas-grid grid-2col" style="margin-bottom:16px;">
+    <div class="zone" style="border-color:var(--teal-mid);">
+      <div class="zone-label" style="color:var(--teal)">Leakage points — check all that apply</div>
+      <div class="leak-list">
+        <div class="leak-item"><span class="leak-circle"></span>No data captured at event — unregistered trialists leave</div>
+        <div class="leak-item"><span class="leak-circle"></span>No CRM journey triggered post-event</div>
+        <div class="leak-item"><span class="leak-circle"></span>Leads go cold — no timely follow-up within 48h</div>
+        <div class="leak-item"><span class="leak-circle"></span>Low intent leads captured at scale (quality issue)</div>
+        <div class="leak-item"><span class="leak-circle"></span>Event learnings not fed back into CRM segmentation</div>
+        <div class="leak-item"><span class="leak-circle"></span>Regulatory limits on follow-up communications</div>
+        <div class="leak-item"><span class="leak-circle"></span>LAMP leads treated same as digital leads — no differentiation</div>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:#aaa;font-style:italic;">✏ Circle the ones that apply to your market</div>
+    </div>
+    <div>
+      <div class="zone" style="border-color:var(--teal-mid);margin-bottom:16px;">
+        <div class="zone-label" style="color:var(--teal)">Categories activated at your LAMP</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);">☐ IQOS / P1</span>
+          <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);">☐ VEEV / P4</span>
+          <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);">☐ ZYN / P5</span>
+          <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);">☐ Bonds</span>
+          <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);">☐ Multi-cat</span>
+        </div>
+      </div>
+      <div class="zone" style="border-color:var(--teal-mid);">
+        <div class="zone-label" style="color:var(--teal)">Self-assessment: rate your LAMP acquisition engine</div>
+        <table style="width:100%;font-size:11.5px;border-collapse:collapse;">
+          <tr>
+            <td style="padding:6px 0;color:#555;width:50%;">Lead volume generated</td>
+            <td style="padding:6px 0;font-size:10px;color:#aaa;text-align:right;">1 — 2 — 3 — 4 — 5</td>
+          </tr>
+          <tr style="border-top:1px dashed var(--border);">
+            <td style="padding:6px 0;color:#555;">Lead quality / intent</td>
+            <td style="padding:6px 0;font-size:10px;color:#aaa;text-align:right;">1 — 2 — 3 — 4 — 5</td>
+          </tr>
+          <tr style="border-top:1px dashed var(--border);">
+            <td style="padding:6px 0;color:#555;">Post-event conversion rate</td>
+            <td style="padding:6px 0;font-size:10px;color:#aaa;text-align:right;">1 — 2 — 3 — 4 — 5</td>
+          </tr>
+          <tr style="border-top:1px dashed var(--border);">
+            <td style="padding:6px 0;color:#555;">Follow-up speed (&lt;48h?)</td>
+            <td style="padding:6px 0;font-size:10px;color:#aaa;text-align:right;">1 — 2 — 3 — 4 — 5</td>
+          </tr>
+        </table>
+        <div style="font-size:10px;color:#aaa;font-style:italic;margin-top:6px;">✏ Circle your score on each row</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Step 3 -->
+  <div class="section-heading" style="color: var(--teal)">
+    <span class="step-num num-teal">3</span>
+    ONE CHANGE THAT WOULD UNLOCK ACQUISITION FROM YOUR LAMPs
+  </div>
+  <div class="canvas-grid grid-3col">
+    <div class="zone accent-teal">
+      <div class="zone-label" style="color:var(--teal)">The change we'd make</div>
+      <div class="zone-sub">One concrete improvement — realistic in 6 months</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-green"><span class="postit-hint">The change...</span></div>
+        <div class="postit postit-green"><span class="postit-hint">Why it would work...</span></div>
+        <div class="postit postit-green"><span class="postit-hint">What we need to make it happen...</span></div>
+        <div class="postit postit-yellow"><span class="postit-hint">Who owns it?</span></div>
+      </div>
+    </div>
+    <div class="zone accent-teal">
+      <div class="zone-label" style="color:var(--teal)">What another market could inspire us on</div>
+      <div class="zone-sub">Examples shared in this room worth borrowing</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-blue"><span class="postit-hint">Market + practice...</span></div>
+        <div class="postit postit-blue"><span class="postit-hint">Market + practice...</span></div>
+        <div class="postit postit-blue"><span class="postit-hint">Could we adapt it?</span></div>
+        <div class="postit postit-blue"><span class="postit-hint">What's different?</span></div>
+      </div>
+    </div>
+    <div class="zone" style="border-color:var(--teal);background:var(--teal-light);">
+      <div class="zone-label" style="color:#006B4D;">⭐ How we'd measure success</div>
+      <div class="zone-sub">KPIs that would tell us it's working</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-green"><span class="postit-hint">KPI 1 + target</span></div>
+        <div class="postit postit-green"><span class="postit-hint">KPI 2 + target</span></div>
+      </div>
+      <div class="insight insight-teal" style="margin-top:10px;font-size:10.5px;">Remember: think both brand impact (awareness, desirability) AND acquisition (leads, conversions)</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="mc-logo">MC</span>
+    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span>Breakout 2 of 3</span>
+  </div>
+</div>
+</div>
+
+
+<!-- ═══════════════════════ BREAKOUT 3 ═══════════════════════ -->
+<div id="t3" class="tab-content">
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <span class="breakout-badge badge-amber">Breakout 3 — Phase 1</span>
+      <h1 class="page-title">Leads: What Breaks the Journey and How to Enhance It</h1>
+      <div class="challenge-label">The Challenge</div>
+      <p class="challenge-text">After generating leads, how do we qualify, hand off, and move people forward without losing them? What are the bottlenecks — and what fixes work at scale?</p>
+    </div>
+    <div class="participants-block">
+      <div class="part-label">Participants</div>
+      <div class="part-list">
+        <div class="part-item"><span class="part-dot dot-amber"></span>Raymond Nassar <span class="part-country">— Egypt</span></div>
+        <div class="part-item"><span class="part-dot dot-amber"></span>Ansab Junaid <span class="part-country">— Canada</span></div>
+        <div class="part-item"><span class="part-dot dot-amber"></span>Yasser Yunis <span class="part-country">— Regional SME</span></div>
+        <div class="part-item"><span class="part-dot dot-amber"></span>Fernanda Ocampo <span class="part-country">— Mexico</span></div>
+        <div class="part-item"><span class="part-dot dot-amber"></span>Stephanie Madacs <span class="part-country">— Austria</span></div>
+        <div class="part-item"><span class="part-dot dot-amber"></span>Michalis Kafatsakis <span class="part-country">— Greece</span></div>
+      </div>
+      <div class="facilitators">
+        <div class="fac-label">Facilitators</div>
+        <div class="fac-pills">
+          <span class="fac-pill">Carine Friou</span>
+          <span class="fac-pill">Mariola Sasinowska</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Journey map -->
+  <div class="section-heading" style="color: var(--amber)">
+    <span class="step-num num-amber">1</span>
+    THE LEAD JOURNEY — Fill in what your market does at each phase
+  </div>
+
+  <div class="canvas-grid grid-5stages" style="margin-bottom:8px;">
+
+    <div class="zone" style="border-color:#FFCC7A;background:#FFFDF5;padding:12px;">
+      <div class="zone-label" style="color:var(--amber);font-size:9.5px;">① GENERATE</div>
+      <div style="font-size:10px;color:#777;margin-bottom:8px;">Lead sources</div>
+      <div class="postit-filled pf-orange" style="min-height:44px;font-size:10px;margin-bottom:5px;">Digital / web form</div>
+      <div class="postit-filled pf-orange" style="min-height:44px;font-size:10px;margin-bottom:5px;">BoTG / manned</div>
+      <div class="postit-filled pf-orange" style="min-height:44px;font-size:10px;margin-bottom:5px;">QR / unmanned</div>
+      <div class="postit postit-orange" style="aspect-ratio:unset;min-height:44px;"><span class="postit-hint">+ add source</span></div>
+    </div>
+
+    <div class="zone" style="border-color:var(--purple-mid);background:#FAFAFE;padding:12px;">
+      <div class="zone-label" style="color:var(--purple);font-size:9.5px;">② QUALIFY</div>
+      <div style="font-size:10px;color:#777;margin-bottom:8px;">How you score intent</div>
+      <div class="postit-filled pf-lavender" style="min-height:44px;font-size:10px;margin-bottom:5px;">Survey at registration</div>
+      <div class="postit postit-lavender" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">Lead scoring model?</span></div>
+      <div class="postit postit-lavender" style="aspect-ratio:unset;min-height:44px;"><span class="postit-hint">Category signal?</span></div>
+    </div>
+
+    <div class="zone" style="border-color:#FFCC7A;background:#FFFDF5;padding:12px;">
+      <div class="zone-label" style="color:var(--amber);font-size:9.5px;">③ ENRICH</div>
+      <div style="font-size:10px;color:#777;margin-bottom:8px;">Data you collect</div>
+      <div class="postit postit-orange" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">Cat. preference?</span></div>
+      <div class="postit postit-orange" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">CC pain points?</span></div>
+      <div class="postit postit-orange" style="aspect-ratio:unset;min-height:44px;"><span class="postit-hint">Flavour interest?</span></div>
+    </div>
+
+    <div class="zone" style="border-color:#F5C4B3;background:#FFF9F7;padding:12px;">
+      <div class="zone-label" style="color:var(--coral);font-size:9.5px;">④ ENGAGE</div>
+      <div style="font-size:10px;color:#777;margin-bottom:8px;">First contact method</div>
+      <div class="postit-filled pf-pink" style="min-height:44px;font-size:10px;margin-bottom:5px;">CRM nurture email</div>
+      <div class="postit postit-pink" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">SMS / coach call?</span></div>
+      <div class="postit postit-pink" style="aspect-ratio:unset;min-height:44px;"><span class="postit-hint">Timing?</span></div>
+    </div>
+
+    <div class="zone" style="border-color:#D3D1C7;background:#FAFAFA;padding:12px;">
+      <div class="zone-label" style="color:#555;font-size:9.5px;">⑤ CONVERT</div>
+      <div style="font-size:10px;color:#777;margin-bottom:8px;">Conversion action</div>
+      <div class="postit postit-yellow" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">Guided trial?</span></div>
+      <div class="postit postit-yellow" style="aspect-ratio:unset;min-height:44px;margin-bottom:5px;"><span class="postit-hint">Starter kit?</span></div>
+      <div class="postit postit-yellow" style="aspect-ratio:unset;min-height:44px;"><span class="postit-hint">In-store?</span></div>
+    </div>
+
+  </div>
+
+  <div class="canvas-grid grid-5stages" style="margin-bottom:16px;">
+    <div style="text-align:center;padding:6px 4px;">
+      <div style="font-size:9px;color:var(--amber);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">🔴 Where it breaks?</div>
+      <div style="font-size:9px;color:#aaa;font-style:italic;margin-top:2px;">Write on the red post-it</div>
+      <div class="postit postit-pink" style="margin-top:6px;aspect-ratio:unset;min-height:40px;"><span class="postit-hint">Break point here?</span></div>
+    </div>
+    <div style="text-align:center;padding:6px 4px;">
+      <div class="postit postit-pink" style="margin-top:26px;aspect-ratio:unset;min-height:40px;"><span class="postit-hint">Break point here?</span></div>
+    </div>
+    <div style="text-align:center;padding:6px 4px;">
+      <div class="postit postit-pink" style="margin-top:26px;aspect-ratio:unset;min-height:40px;"><span class="postit-hint">Break point here?</span></div>
+    </div>
+    <div style="text-align:center;padding:6px 4px;">
+      <div class="postit postit-pink" style="margin-top:26px;aspect-ratio:unset;min-height:40px;"><span class="postit-hint">Break point here?</span></div>
+    </div>
+    <div style="text-align:center;padding:6px 4px;">
+      <div class="postit postit-pink" style="margin-top:26px;aspect-ratio:unset;min-height:40px;"><span class="postit-hint">Break point here?</span></div>
+    </div>
+  </div>
+
+  <div class="insight insight-amber">
+    <strong>Morocco insight:</strong> Guided trial with 3 flavours = 60% conversion vs 16% with 1 flavour. &nbsp;|&nbsp; <strong>Egypt:</strong> Once leads reach the face-to-face "Get Started" step, conversion is strong — the gap is getting them there. &nbsp;|&nbsp; <strong>Romania:</strong> 3-relay model: Sales Expert → CSC → Mobile Coach — each step with full context from prior interaction.
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Step 2: Priority actions -->
+  <div class="section-heading" style="color: var(--amber)">
+    <span class="step-num num-amber">2</span>
+    PRIORITY ACTIONS — Which fixes would have the biggest impact?
+  </div>
+
+  <div class="canvas-grid grid-3col" style="margin-bottom:16px;">
+
+    <div class="zone" style="border-color:#FFCC7A;background:#FFFDF5;">
+      <div class="zone-label" style="color:var(--amber);">Pull model — less push, more pull</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;line-height:1.5;">Shift from outbound calls/SMS blasting to value-led content that earns the next step</div>
+      <div class="postit-filled pf-orange" style="min-height:44px;font-size:10.5px;margin-bottom:5px;">Morocco: balanced comms approach after overcommunication failure</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ Applies to my market</span>
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ We've tried it</span>
+      </div>
+    </div>
+
+    <div class="zone" style="border-color:var(--purple-mid);">
+      <div class="zone-label" style="color:var(--purple);">MC-aware lead scoring</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;line-height:1.5;">Score leads by category intent and route each to the right journey from day 1</div>
+      <div class="postit-filled pf-lavender" style="min-height:44px;font-size:10.5px;margin-bottom:5px;">Egypt: Get Started survey segments leads by IQOS / VEEV / both from entry</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ Applies to my market</span>
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ We've tried it</span>
+      </div>
+    </div>
+
+    <div class="zone" style="border-color:#FFCC7A;background:#FFFDF5;">
+      <div class="zone-label" style="color:var(--amber);">3-relay handoff model</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;line-height:1.5;">Sales Expert → CSC → Mobile Coach, each step with full context from the prior one</div>
+      <div class="postit-filled pf-orange" style="min-height:44px;font-size:10.5px;margin-bottom:5px;">Morocco: relay approach with data passed at each handoff point</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ Applies to my market</span>
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ We've tried it</span>
+      </div>
+    </div>
+
+    <div class="zone">
+      <div class="zone-label" style="color:#555;">Multi-flavour guided trial</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;line-height:1.5;">Offer 3 flavours at trial — demonstrated to increase conversion from 16% → 60%</div>
+      <div class="postit-filled pf-green" style="min-height:44px;font-size:10.5px;margin-bottom:5px;">Morocco: key insight from trial programme in 2024</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ Applies to my market</span>
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ We've tried it</span>
+      </div>
+    </div>
+
+    <div class="zone">
+      <div class="zone-label" style="color:#555;">Gamified engagement hub</div>
+      <div style="font-size:10.5px;color:#555;margin-bottom:8px;line-height:1.5;">Raffle / reward mechanic to bridge the gap between lead and first physical step</div>
+      <div class="postit-filled pf-blue" style="min-height:44px;font-size:10.5px;margin-bottom:5px;">Egypt: LAS Engagement Hub pilot — gamified path to guided trial</div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ Applies to my market</span>
+        <span style="font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);">☐ We've tried it</span>
+      </div>
+    </div>
+
+    <div class="zone" style="border-color:var(--amber);background:var(--amber-light);">
+      <div class="zone-label" style="color:var(--amber);">⭐ Our group's #1 priority action</div>
+      <div style="font-size:10.5px;color:#8A4D00;margin-bottom:8px;line-height:1.5;">What single action would most improve lead conversion in our markets?</div>
+      <div class="postit-grid postit-grid-2">
+        <div class="postit postit-yellow"><span class="postit-hint">The action + why</span></div>
+        <div class="postit postit-yellow"><span class="postit-hint">Owner + timeline</span></div>
+      </div>
+      <div style="font-size:9.5px;color:var(--amber);margin-top:8px;font-weight:600;">↑ This is your group's output commitment</div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="mc-logo">MC</span>
+    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span>Breakout 3 of 3</span>
+  </div>
+</div>
+</div>
+
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
