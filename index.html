@@ -4,551 +4,681 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MC Acquisition Workshop — Breakout Canvases</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --purple: #5B4BCC; --purple-light: #EBE8FF; --purple-mid: #C4BCFF;
-  --teal: #00A87A; --teal-dark: #007A58; --teal-light: #D6F5EC; --teal-mid: #7DDFC0;
-  --amber: #E07B00; --amber-light: #FFF0D6; --amber-mid: #FFCC7A;
-  --coral: #D94F2E; --coral-light: #FDEAE5;
-  --gray-mid: #888; --gray-light: #F5F4F1;
-  --border: #E0DDD8; --white: #FFFFFF; --ink: #1A1A1A;
-  --aud1: #7C6FE0; --aud2: #3DADD4; --aud3: #E07B00; --aud4: #3DAD8A; --aud5: #D94F2E;
-}
-body { font-family: 'DM Sans', sans-serif; background: #EFEDE8; color: var(--ink); min-height: 100vh; }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
 
-/* TABS */
-.tab-bar { display: flex; gap: 0; padding: 24px 32px 0; position: sticky; top: 0; z-index: 100; background: #EFEDE8; align-items: flex-end; }
-.tab-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border: 1.5px solid var(--border); border-bottom: none; background: #E0DDD8; color: var(--gray-mid); cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.15s; position: relative; top: 1px; }
-.tab-btn:hover { background: #F0EDE8; color: var(--ink); }
-.tab-btn.active { background: var(--white); color: var(--ink); font-weight: 600; }
-.tab-btn.t1.active { border-top: 3px solid var(--purple); }
-.tab-btn.t2.active { border-top: 3px solid var(--teal); }
-.tab-btn.t3.active { border-top: 3px solid var(--amber); }
-.print-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 18px; border-radius: 20px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--white); cursor: pointer; margin-left: auto; margin-bottom: 6px; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+  :root {
+    --ink: #1a1a1a; --ink-2: #444; --ink-3: #6b6b6b; --ink-4: #aaa;
+    --rule: #e4e4e0; --rule-dark: #c8c8c0;
+    --bg: #f7f7f4; --bg-card: #ffffff;
+    --purple: #5a4fcf; --purple-light: #eeedfc; --purple-mid: #c4bff0; --purple-dark: #3d34a5;
+    --teal: #0e8a6e; --teal-light: #e0f5ef; --teal-mid: #9fdecf;
+    --amber: #b06000; --amber-light: #fff4e0; --amber-mid: #ffc97a;
+    --red: #c0392b; --red-light: #fdecea;
+    --slate: #e8e8e4;
+    --ex1: #2563eb; --ex1-light: #eff6ff; --ex1-mid: #bfdbfe;
+    --ex2: #d97706; --ex2-light: #fffbeb; --ex2-mid: #fde68a;
+    --ex3: #0e8a6e; --ex3-light: #e0f5ef; --ex3-mid: #9fdecf;
+    --page-max: 980px;
+  }
 
-/* PAGE */
-.page { background: var(--white); margin: 0 32px 48px; border: 1.5px solid var(--border); border-top: none; border-radius: 0 12px 12px 12px; padding: 40px 48px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
 
-/* PAGE HEADER */
-.page-header { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 24px; padding-bottom: 24px; border-bottom: 1.5px solid var(--border); margin-bottom: 32px; }
-.breakout-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; }
-.badge-purple { background: var(--purple-light); color: var(--purple); }
-.badge-teal   { background: var(--teal-light); color: var(--teal-dark); }
-.badge-amber  { background: var(--amber-light); color: var(--amber); }
-.page-title { font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1.2; color: var(--ink); max-width: 580px; }
-.challenge-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-mid); margin-top: 12px; margin-bottom: 4px; }
-.challenge-text { font-size: 13px; color: #555; max-width: 540px; line-height: 1.6; font-style: italic; }
-.participants-block { background: var(--gray-light); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; min-width: 210px; }
-.part-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 8px; }
-.part-list { display: flex; flex-direction: column; gap: 4px; }
-.part-item { display: flex; align-items: center; gap: 7px; font-size: 11.5px; }
-.part-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.dot-purple { background: var(--purple); } .dot-teal { background: var(--teal); } .dot-amber { background: var(--amber); }
-.part-country { font-size: 10.5px; color: var(--gray-mid); }
-.facilitators { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
-.fac-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 5px; }
-.fac-pills { display: flex; gap: 5px; flex-wrap: wrap; }
-.fac-pill { font-size: 10.5px; font-weight: 500; padding: 3px 9px; border-radius: 20px; background: var(--ink); color: var(--white); }
+  @media print {
+    body { background: white; }
+    .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; }
+    .tab-panel { display: block !important; }
+    textarea { border: 1px dashed #ccc !important; background: white !important; }
+  }
 
-/* POST-ITS */
-.postit { border-radius: 2px; padding: 8px; min-height: 66px; display: flex; align-items: flex-end; }
-.postit-hint { font-size: 9.5px; color: rgba(0,0,0,0.28); font-style: italic; line-height: 1.3; }
-.postit-yellow  { background: #FFF9A8; box-shadow: 2px 3px 0 #E8DC6A; }
-.postit-pink    { background: #FFB8CB; box-shadow: 2px 3px 0 #E87A96; }
-.postit-blue    { background: #B8D8FF; box-shadow: 2px 3px 0 #7AAEE8; }
-.postit-green   { background: #B8F0D2; box-shadow: 2px 3px 0 #6DD4A2; }
-.postit-orange  { background: #FFD4A0; box-shadow: 2px 3px 0 #E8A060; }
-.postit-lavender{ background: #DDD0FF; box-shadow: 2px 3px 0 #A890E8; }
+  /* ── NAV ── */
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(247,247,244,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); display: flex; align-items: center; padding: 0 32px; height: 48px; }
+  .nav-title { font-size: 13px; font-weight: 500; color: var(--ink-3); margin-right: 24px; white-space: nowrap; }
+  .nav a { font-size: 13px; color: var(--ink-3); text-decoration: none; padding: 0 14px; height: 48px; display: flex; align-items: center; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; white-space: nowrap; cursor: pointer; }
+  .nav a:hover { color: var(--ink); }
+  .nav a.active { color: var(--purple); border-bottom-color: var(--purple); font-weight: 500; }
+  .nav-spacer { flex: 1; }
+  .btn-print { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; background: var(--ink); color: white; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+  .btn-print:hover { opacity: .75; }
 
-/* PAGE FOOTER */
-.page-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 10px; color: #aaa; }
-.mc-logo { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--purple); }
+  /* ── WRAPPER ── */
+  .canvas-wrapper { max-width: var(--page-max); margin: 44px auto; padding: 0 24px; }
 
-@media print {
-  body { background: white; }
-  .tab-bar { display: none; }
-  .tab-content { display: block !important; }
-  .page { margin: 0; border: none; border-radius: 0; padding: 24px 32px; page-break-after: always; }
-}
+  /* ── BREAKOUT PANEL ── */
+  .breakout-panel { display: none; }
+  .breakout-panel.active { display: block; }
 
+  /* ── PAGE ── */
+  .page { background: var(--bg-card); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; margin-bottom: 48px; box-shadow: 0 2px 20px rgba(0,0,0,.06); }
 
-/* ══ BREAKOUT 1 ══════════════════════════════════ */
-.b1-grid {
-  display: grid;
-  grid-template-columns: 160px 1fr 1fr 1fr 1fr 170px;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.b1-col-hdr {
-  background: var(--gray-light); padding: 10px 12px;
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555;
-  border-right: 1px solid var(--border); border-bottom: 1.5px solid var(--border);
-}
-.b1-col-hdr.pilot-hdr { background: var(--purple-light); color: var(--purple); border-left: 2px solid var(--purple); border-right: none; }
-.b1-label { padding: 12px; border-right: 1.5px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
-.b1-cell  { padding: 10px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; min-height: 116px; }
-.last-row .b1-label, .last-row .b1-cell { border-bottom: none; }
-.b1-pilot { grid-column: 6; grid-row: 2 / 8; background: var(--purple-light); border-left: 2px solid var(--purple); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.b1-pilot-title { font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 8px; border-bottom: 1px solid var(--purple-mid); }
-.b1-slot-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #7060CC; margin-bottom: 3px; }
-.cat-chip { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: white; }
-.chip-iqos  { background: #5B4BCC; }
-.chip-veev  { background: #00A87A; }
-.chip-zyn   { background: #E07B00; }
-.aud1 { border-left: 4px solid var(--aud1); }
-.aud2 { border-left: 4px solid var(--aud2); }
-.aud3 { border-left: 4px solid var(--aud3); }
-.aud4 { border-left: 4px solid var(--aud4); }
-.aud5 { border-left: 4px solid var(--aud5); }
+  /* ── PAGE HEADER ── */
+  .page-header { padding: 28px 40px 24px; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 220px; gap: 32px; align-items: start; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+  .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); }
+  .challenge-statement { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.3; border-left: 3px solid var(--purple); padding-left: 16px; margin-bottom: 14px; }
+  .meta-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .meta-pill { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--rule-dark); color: var(--ink-3); }
+  .participants-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .participant { font-size: 12px; color: var(--ink-2); line-height: 1.75; }
+  .participant strong { color: var(--ink); font-weight: 500; }
+  .p-sep { border: none; border-top: 1px solid var(--rule); margin: 9px 0; }
 
+  /* ── IN-PAGE EXERCISE TABS (B1) ── */
+  .ex-tabs { display: flex; border-bottom: 1px solid var(--rule); background: var(--bg); }
+  .ex-tab { padding: 12px 24px; font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; white-space: nowrap; }
+  .ex-tab:hover { color: var(--ink); }
+  .ex-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
 
-/* ══ BREAKOUT 2 ══════════════════════════════════ */
-.b2-stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.b2-stage { border-radius: 12px; border: 2px solid; overflow: hidden; }
-.b2-s1 { border-color: #9B8FE8; }
-.b2-s2 { border-color: #5BACD4; }
-.b2-s3 { border-color: #3DBF8A; }
-.b2-s4 { border-color: #E0A030; }
-.b2-stage-hdr { text-align: center; padding: 16px 12px; }
-.b2-s1 .b2-stage-hdr { background: #EDE8FF; }
-.b2-s2 .b2-stage-hdr { background: #DDF0FA; }
-.b2-s3 .b2-stage-hdr { background: #DAF5EC; }
-.b2-s4 .b2-stage-hdr { background: #FDF3E0; }
-.b2-icon { font-size: 28px; margin-bottom: 6px; }
-.b2-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
-.b2-sub { font-size: 11px; color: var(--gray-mid); margin-top: 3px; font-style: italic; }
-.b2-divider { height: 1.5px; }
-.b2-s1 .b2-divider { background: #C4BCFF; }
-.b2-s2 .b2-divider { background: #9ACCE8; }
-.b2-s3 .b2-divider { background: #7DDFC0; }
-.b2-s4 .b2-divider { background: #FFD070; }
-.b2-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: white; }
-.b2-row-label { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600; color: #444; margin-bottom: 3px; }
-.b2-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
-.bdot-check { background: #3DBF8A; }
-.bdot-cross { background: #E04B4B; }
-.bdot-idea  { background: #F5C242; }
-.b2-zone { border-radius: 6px; padding: 10px; min-height: 72px; display: flex; align-items: flex-end; }
-.z-green  { background: #F0FDF6; border: 1px dashed #7DDFC0; }
-.z-red    { background: #FDF2F2; border: 1px dashed #F5AAAA; }
-.z-yellow { background: #FFFBE8; border: 1px dashed #F5C242; }
+  /* ── EXERCISE BLOCK ── */
+  .ex-header { display: flex; align-items: center; gap: 14px; padding: 16px 40px 13px; border-bottom: 1px solid var(--rule); background: var(--bg); }
+  .ex-badge { height: 30px; padding: 0 14px; border-radius: 20px; display: flex; align-items: center; font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+  .ex-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .ex-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .ex-time { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--ink-3); background: var(--slate); padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
 
+  .ex-channel-strip { display: flex; align-items: center; gap: 8px; padding: 10px 40px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+  .ch-strip-label { font-size: 11px; font-weight: 600; color: var(--ink-3); margin-right: 2px; }
+  .ch-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; white-space: nowrap; }
 
-/* ══ BREAKOUT 3 ══════════════════════════════════ */
-.b3-pipeline { display: grid; grid-template-columns: repeat(5, 1fr); margin-bottom: 20px; }
-.b3-stage { padding: 13px 10px; text-align: center; font-size: 13px; font-weight: 700; color: white; position: relative; }
-.b3-stage::after { content: ''; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 21px solid transparent; border-bottom: 21px solid transparent; z-index: 2; }
-.b3-stage:last-child::after { display: none; }
-.b3-stage-sub { font-size: 10px; font-weight: 400; opacity: 0.8; margin-top: 3px; }
-.b3-s1 { background: #2DBFAA; border-radius: 8px 0 0 8px; } .b3-s1::after { border-left: 13px solid #2DBFAA; }
-.b3-s2 { background: #4B5FCC; } .b3-s2::after { border-left: 13px solid #4B5FCC; }
-.b3-s3 { background: #8B4BCC; } .b3-s3::after { border-left: 13px solid #8B4BCC; }
-.b3-s4 { background: #E0A030; } .b3-s4::after { border-left: 13px solid #E0A030; }
-.b3-s5 { background: #3DBF6A; border-radius: 0 8px 8px 0; }
-.b3-band { display: flex; align-items: center; gap: 10px; padding: 9px 16px; background: #2A2A2A; }
-.b3-band-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
-.b3-band-label { font-size: 12px; font-weight: 700; color: white; }
-.b3-band-sep { color: rgba(255,255,255,0.35); margin: 0 6px; }
-.b3-band-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
-.b3-matrix { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 10px; margin-bottom: 6px; }
-.b3-matrix.bg-red    { background: #FDF2F2; }
-.b3-matrix.bg-green  { background: #F2FAF5; }
-.b3-matrix.bg-yellow { background: #FDFBF0; }
-.b3-col { display: flex; flex-direction: column; gap: 6px; }
-.b3-p { border-radius: 2px; min-height: 58px; padding: 7px; display: flex; align-items: flex-end; }
-.b3-p.pink   { background: #FFD0D8; box-shadow: 2px 2px 0 #E8A0B0; }
-.b3-p.green  { background: #C8F0DA; box-shadow: 2px 2px 0 #7ADCA4; }
-.b3-p.yellow { background: #FFF8B0; box-shadow: 2px 2px 0 #E8DC6A; }
-.b3-hint { font-size: 9.5px; color: rgba(0,0,0,0.28); font-style: italic; }
+  .ex-body { padding: 20px 40px 28px; }
+  .ex-instruction { font-size: 13px; color: var(--ink-3); font-style: italic; line-height: 1.5; margin-bottom: 18px; }
+
+  /* ── TABLE ── */
+  .ex-table { width: 100%; border-collapse: collapse; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+  .ex-table th { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding: 9px 12px; background: var(--bg); border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); text-align: left; }
+  .ex-table th:last-child { border-right: none; }
+  .ex-table td { border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); padding: 8px; vertical-align: top; }
+  .ex-table td:last-child { border-right: none; }
+  .ex-table tr:last-child td { border-bottom: none; }
+  .process-label-cell { padding: 12px 14px !important; background: var(--bg); vertical-align: middle; }
+  .process-tag { font-size: 12px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 3px; }
+  .process-hint { font-size: 11px; color: var(--ink-3); }
+
+  /* ── POST-IT ── */
+  .postit { position: relative; min-height: 80px; border-radius: 2px; padding: 8px 10px 8px 10px; box-shadow: 2px 3px 8px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08); margin-bottom: 6px; }
+  .postit:last-child { margin-bottom: 0; }
+  .postit::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: rgba(0,0,0,.1); border-radius: 2px 2px 0 0; }
+  .postit-label { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .6; margin-bottom: 4px; }
+  .postit textarea { width: 100%; min-height: 52px; background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 12px; color: rgba(0,0,0,.75); line-height: 1.5; resize: vertical; padding: 0; }
+  .postit textarea::placeholder { color: rgba(0,0,0,.3); font-style: italic; }
+  .pi-eg { background: #ffd6cc; } .pi-ma { background: #ffc9c9; }
+  .pi-es { background: #fff0b3; } .pi-at { background: #c9e4ff; }
+  .pi-ro { background: #bde4ff; } .pi-gr { background: #c2f0e4; }
+  .pi-mx { background: #e0d8ff; } .pi-ca { background: #dce0e8; }
+  .mkt-label { font-size: 10px; font-weight: 600; color: white; padding: 1px 6px; border-radius: 3px; display: inline-block; margin-right: 4px; }
+  .mk-eg { background: #c0392b; } .mk-ma { background: #b03a2e; }
+  .mk-es { background: #c97a00; } .mk-at { background: #2563eb; }
+  .mk-ro { background: #1a6fa8; } .mk-gr { background: #0e8a6e; }
+  .mk-mx { background: #5a4fcf; } .mk-ca { background: #374151; }
+
+  /* ── WRITE AREA ── */
+  .write-area { width: 100%; min-height: 60px; background: transparent; border: 1px dashed var(--rule-dark); border-radius: 6px; padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink); line-height: 1.5; resize: vertical; transition: border-color .15s, background .15s; }
+  .write-area:focus { outline: none; border-color: var(--purple); background: var(--purple-light); }
+  .write-area::placeholder { color: var(--ink-4); font-style: italic; }
+  .write-area.sm { min-height: 50px; }
+
+  /* ── ENH CARDS ── */
+  .enh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .enh-card { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .enh-card-head { padding: 10px 14px; font-size: 12px; font-weight: 600; border-bottom: 1px solid var(--rule); }
+  .enh-card-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .enh-sublabel { font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+
+  /* ── B2/B3 MOMENT / STAGE TABS ── */
+  .moment-tabs { display: flex; border-bottom: 1px solid var(--rule); background: var(--bg); overflow-x: auto; }
+  .moment-tab { padding: 14px 22px; font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 7px; transition: color .15s, border-color .15s; flex-shrink: 0; }
+  .moment-tab:hover { color: var(--ink); }
+  .moment-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .moment-panel { display: none; }
+  .moment-panel.active { display: block; }
+
+  /* B2 3-col grid */
+  .b2-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .b2-col { padding: 20px 20px 24px; border-right: 1px solid var(--rule); }
+  .b2-col:last-child { border-right: none; }
+  .b2-col-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* B3 3-row grid */
+  .b3-rows { display: flex; flex-direction: column; }
+  .b3-row-head { padding: 10px 40px; font-size: 11px; font-weight: 600; border-bottom: 1px solid var(--rule); }
+  .b3-row-body { padding: 16px 40px 20px; border-bottom: 1px solid var(--rule); }
+  .b3-row-body:last-child { border-bottom: none; }
+
+  /* ── FOOTER ── */
+  .page-footer { padding: 11px 40px; border-top: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; background: var(--bg); }
+  .footer-brand { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--purple); }
+  .footer-meta { font-size: 11px; color: var(--ink-4); }
+  .footer-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-3); }
 </style>
 </head>
 <body>
 
-<div class="tab-bar">
-  <button class="tab-btn t1 active" onclick="showTab('t1',this)">Breakout 1 — MC Navigation</button>
-  <button class="tab-btn t2" onclick="showTab('t2',this)">Breakout 2 — LAMPs &amp; Events</button>
-  <button class="tab-btn t3" onclick="showTab('t3',this)">Breakout 3 — Lead Journey</button>
-  <button class="print-btn" onclick="window.print()">🖨 Print all</button>
-</div>
+<nav class="nav no-print">
+  <span class="nav-title">MC Acquisition Workshop</span>
+  <a onclick="showBreakout('b1')" class="active" id="nav-b1">Breakout 1 — MC Navigation</a>
+  <a onclick="showBreakout('b2')" id="nav-b2">Breakout 2 — LAMPs &amp; Events</a>
+  <a onclick="showBreakout('b3')" id="nav-b3">Breakout 3 — Lead Journey</a>
+  <span class="nav-spacer"></span>
+  <button class="btn-print" onclick="window.print()">🖨 Print all</button>
+</nav>
 
+<div class="canvas-wrapper">
 
-<!-- ══════════════ BREAKOUT 1 ══════════════ -->
-<div id="t1" class="tab-content active">
+<!-- ══════════════════════════════════════
+     BREAKOUT 1
+══════════════════════════════════════ -->
+<div class="breakout-panel active" id="b1">
 <div class="page">
+
   <div class="page-header">
     <div>
-      <span class="breakout-badge badge-purple">Breakout 1 — Phase 1</span>
-      <h1 class="page-title">MC Navigation: Which Category, to Whom, When &amp; Where</h1>
-      <div class="challenge-label">The Challenge</div>
-      <p class="challenge-text">Three categories, one shot to get it right. How do we build a shared logic for who gets what, through which channel, and at which moment?</p>
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Breakout 1 — MC Navigation</div>
+      <h1 class="challenge-statement">How do we scale MC Navigation into confident, consistent execution, across manned and unmanned channels, consumer profiles, and hero brand contexts?</h1>
+      <div class="meta-row">
+        <span class="meta-pill">⏱ 75 min</span>
+        <span class="meta-pill">Day 2 · Afternoon</span>
+        <span class="meta-pill">3 exercises</span>
+        <span class="meta-pill">↗ LAMPs &amp; Events → Breakout 2</span>
+      </div>
     </div>
-    <div class="participants-block">
-      <div class="part-label">Participants</div>
-      <div class="part-list">
-        <div class="part-item"><span class="part-dot dot-purple"></span>Andrzej Domeracki <span class="part-country">— Spain</span></div>
-        <div class="part-item"><span class="part-dot dot-purple"></span>Marco Stefanetti <span class="part-country">— Austria</span></div>
-        <div class="part-item"><span class="part-dot dot-purple"></span>Anca Predoiu <span class="part-country">— Romania</span></div>
-        <div class="part-item"><span class="part-dot dot-purple"></span>Mohssine Akram <span class="part-country">— Morocco</span></div>
-        <div class="part-item"><span class="part-dot dot-purple"></span>Pawel Kosakowski <span class="part-country">— Regional SME</span></div>
-        <div class="part-item"><span class="part-dot dot-purple"></span>Hady Gamaleldin <span class="part-country">— Egypt</span></div>
-      </div>
-      <div class="facilitators">
-        <div class="fac-label">Facilitators</div>
-        <div class="fac-pills"><span class="fac-pill">Carine Friou</span><span class="fac-pill">Marta Kobylecka</span></div>
-      </div>
+    <div>
+      <div class="participants-label">Participants</div>
+      <div class="participant"><span>🇪🇬</span> <strong>Egypt</strong> — Hady Gamaleldin</div>
+      <div class="participant"><span>🇲🇦</span> <strong>Morocco</strong> — Mohssine Akram</div>
+      <div class="participant"><span>🇪🇸</span> <strong>Spain</strong> — Andrzej Domeracki</div>
+      <div class="participant"><span>🇦🇹</span> <strong>Austria</strong> — Marco Stefanetti</div>
+      <div class="participant"><span>🇷🇴</span> <strong>Romania</strong> — Anca Predoiu</div>
+      <div class="participant"><span>🇬🇷</span> <strong>Greece</strong> · <span>🇲🇽</span> <strong>Mexico</strong> · <span>🇨🇦</span> <strong>Canada</strong></div>
+      <hr class="p-sep">
+      <div class="participants-label">Facilitators</div>
+      <div class="participant"><strong>Carine Friou</strong> · <strong>Marta Kobylecka</strong></div>
     </div>
   </div>
 
-  <!-- THE GRID -->
-  <div class="b1-grid">
-    <!-- header row -->
-    <div class="b1-col-hdr">From → To</div>
-    <div class="b1-col-hdr">What user / audience?</div>
-    <div class="b1-col-hdr">✅ What works?</div>
-    <div class="b1-col-hdr">❌ What doesn't work?</div>
-    <div class="b1-col-hdr">💬 What narrative / trigger?</div>
-    <div class="b1-col-hdr pilot-hdr">⭐ A thing we could pilot in 90 days</div>
+  <!-- Exercise tabs -->
+  <div class="ex-tabs">
+    <div class="ex-tab active" onclick="showExTab('ex1','b1')">Exercise 1 — Manned channels</div>
+    <div class="ex-tab" onclick="showExTab('ex2','b1')">Exercise 2 — Unmanned channels</div>
+    <div class="ex-tab" onclick="showExTab('ex3','b1')">Exercise 3 — Enhancements</div>
+  </div>
 
-    <!-- ROW 1: IQOS → ZYN -->
-    <div class="b1-label aud1">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <span class="cat-chip chip-iqos">IQOS</span>
-        <span style="font-size:11px;color:var(--gray-mid);text-align:center;">→</span>
-        <span class="cat-chip chip-zyn">ZYN</span>
-      </div>
-    </div>
-    <div class="b1-cell"><div class="postit postit-yellow"><span class="postit-hint">Who is this user in your market?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-green"><span class="postit-hint">What works to drive this switch?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-pink"><span class="postit-hint">What blocks or fails?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-lavender"><span class="postit-hint">Message / moment that triggers them?</span></div></div>
-
-    <!-- PILOT — spans rows 2–7 (rows 1–6 after header) -->
-    <div class="b1-pilot">
-      <p style="font-size:11px;color:#6050AA;line-height:1.5;margin-bottom:4px;">Based on patterns above — what one action does the group commit to test?</p>
+  <!-- ── EX 1 ── -->
+  <div class="tab-panel active" id="ex1">
+    <div class="ex-header">
+      <div class="ex-badge" style="background:var(--ex1-light);color:var(--ex1);border:1px solid var(--ex1-mid)">Exercise 1</div>
       <div>
-        <div class="b1-slot-label">The idea</div>
-        <div class="postit postit-lavender" style="min-height:60px;"><span class="postit-hint">Write it here...</span></div>
+        <div class="ex-title" style="color:var(--ex1)">Manned channels — as-is navigation</div>
+        <div class="ex-sub">Each market picks the process where they have the biggest pain point and fills in their row</div>
+      </div>
+      <div class="ex-time">20 min</div>
+    </div>
+    <div class="ex-channel-strip">
+      <span class="ch-strip-label">In scope:</span>
+      <span class="ch-tag" style="background:var(--ex1-light);color:var(--ex1);border-color:var(--ex1-mid)">Brand Retail</span>
+      <span class="ch-tag" style="background:var(--ex1-light);color:var(--ex1);border-color:var(--ex1-mid)">IQOS Partners</span>
+      <span class="ch-tag" style="background:var(--ex1-light);color:var(--ex1);border-color:var(--ex1-mid)">BoTG</span>
+      <span class="ch-tag" style="background:var(--ex1-light);color:var(--ex1);border-color:var(--ex1-mid)">CSC</span>
+      <span class="ch-tag" style="background:var(--ex1-light);color:var(--ex1);border-color:var(--ex1-mid)">Right-fitting Events</span>
+      <span style="font-size:11px;color:var(--ink-4);margin-left:4px">↗ LAMPs &amp; Events → Breakout 2</span>
+    </div>
+    <div class="ex-body">
+      <p class="ex-instruction">Each market identifies the process that is most critical from a strategic point of view — where a navigation failure has the biggest impact on acquisition — and adds their post-it to each column.</p>
+      <table class="ex-table">
+        <thead>
+          <tr>
+            <th style="width:25%">Current process / as-is framework<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--ink-4)">Decision tree, script, rule of thumb…</span></th>
+            <th style="width:20%">Channel(s) where applied</th>
+            <th style="width:20%">Consumer profile most affected</th>
+            <th style="width:17.5%">What works ✓</th>
+            <th style="width:17.5%">Pain points ✗</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Describe your current process…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Channel(s)…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Profile affected…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="What works…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Pain points…"></textarea></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── EX 2 ── -->
+  <div class="tab-panel" id="ex2">
+    <div class="ex-header">
+      <div class="ex-badge" style="background:var(--ex2-light);color:var(--ex2);border:1px solid var(--ex2-mid)">Exercise 2</div>
+      <div>
+        <div class="ex-title" style="color:var(--ex2)">Unmanned channels — as-is navigation</div>
+        <div class="ex-sub">Each market picks the process where they have the biggest pain point and fills in their row</div>
+      </div>
+      <div class="ex-time">20 min</div>
+    </div>
+    <div class="ex-channel-strip">
+      <span class="ch-strip-label">In scope:</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">Paid Media</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">Social</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">KA / GT</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">Websites</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">e-Com</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">eCRM</span>
+      <span class="ch-tag" style="background:var(--ex2-light);color:var(--ex2);border-color:var(--ex2-mid)">OOH</span>
+    </div>
+    <div class="ex-body">
+      <p class="ex-instruction">Each market picks the process where NPU-based navigation breaks down most — and adds their post-it to each column.</p>
+      <table class="ex-table">
+        <thead>
+          <tr>
+            <th style="width:25%">Current process / as-is logic<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;color:var(--ink-4)">How NPU is used (or not) to serve the right category</span></th>
+            <th style="width:20%">Channel(s) where applied</th>
+            <th style="width:20%">Consumer profile most affected</th>
+            <th style="width:17.5%">What works ✓</th>
+            <th style="width:17.5%">Pain points ✗</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Describe your current process…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Describe your current process…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Channel(s)…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Channel(s)…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Profile affected…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Profile affected…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="What works…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="What works…"></textarea></div>
+            </td>
+            <td>
+              <div class="postit pi-eg"><span class="mkt-label mk-eg">EG</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ma"><span class="mkt-label mk-ma">MA</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-es"><span class="mkt-label mk-es">ES</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-at"><span class="mkt-label mk-at">AT</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ro"><span class="mkt-label mk-ro">RO</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-gr"><span class="mkt-label mk-gr">GR</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-mx"><span class="mkt-label mk-mx">MX</span><textarea placeholder="Pain points…"></textarea></div>
+              <div class="postit pi-ca"><span class="mkt-label mk-ca">CA</span><textarea placeholder="Pain points…"></textarea></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── EX 3 ── -->
+  <div class="tab-panel" id="ex3">
+    <div class="ex-header">
+      <div class="ex-badge" style="background:var(--ex3-light);color:var(--ex3);border:1px solid var(--ex3-mid)">Exercise 3</div>
+      <div>
+        <div class="ex-title" style="color:var(--ex3)">Possible enhancements — what could enable better navigation?</div>
+        <div class="ex-sub">Based on the pain points surfaced in Ex. 1 &amp; 2 — what would unlock confident, consistent navigation at scale?</div>
+      </div>
+      <div class="ex-time">20 min</div>
+    </div>
+    <div class="ex-body">
+      <p class="ex-instruction">Be concrete — not "better training" but "a 3-question NPU check embedded in the frontliner app before each interaction."</p>
+      <div class="enh-grid">
+        <div class="enh-card">
+          <div class="enh-card-head" style="background:var(--ex1-light);color:var(--ex1)">🟦 Manned channel enhancements</div>
+          <div class="enh-card-body">
+            <div class="enh-sublabel">Process / framework improvement</div>
+            <textarea class="write-area" placeholder="e.g. Shorter navigation card — 3-step laminated guide frontliners can use in under 2 min at POS, with pivot triggers per profile…"></textarea>
+            <div class="enh-sublabel" style="margin-top:4px">Training / coaching</div>
+            <textarea class="write-area" placeholder="e.g. 15-min role-play added to onboarding — one rejection scenario + one pivot per consumer profile…"></textarea>
+            <div class="enh-sublabel" style="margin-top:4px">Tool / asset</div>
+            <textarea class="write-area" placeholder="e.g. Navigation prompt built into frontliner app — surfaces 1st offer suggestion based on NPU captured at greeting…"></textarea>
+          </div>
+        </div>
+        <div class="enh-card">
+          <div class="enh-card-head" style="background:var(--ex2-light);color:var(--ex2)">🟧 Unmanned channel enhancements</div>
+          <div class="enh-card-body">
+            <div class="enh-sublabel">Data / NPU signal</div>
+            <textarea class="write-area" placeholder="e.g. NPU field added to registration form — so eCRM journeys serve the right 1st offer automatically…"></textarea>
+            <div class="enh-sublabel" style="margin-top:4px">Personalisation / automation</div>
+            <textarea class="write-area" placeholder="e.g. AI-suggested 1st offer in paid media based on provisional NPU + last engagement signal…"></textarea>
+            <div class="enh-sublabel" style="margin-top:4px">Content / creative</div>
+            <textarea class="write-area" placeholder="e.g. Category-specific creative variants per NPU segment — no more one-size-fits-all MC proposition in eCRM…"></textarea>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- ROW 2: VEEV → ZYN -->
-    <div class="b1-label aud2">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <span class="cat-chip chip-veev">VEEV</span>
-        <span style="font-size:11px;color:var(--gray-mid);text-align:center;">→</span>
-        <span class="cat-chip chip-zyn">ZYN</span>
-      </div>
-    </div>
-    <div class="b1-cell"><div class="postit postit-yellow"><span class="postit-hint">Who is this user in your market?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-green"><span class="postit-hint">What works to drive this switch?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-pink"><span class="postit-hint">What blocks or fails?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-lavender"><span class="postit-hint">Message / moment that triggers them?</span></div></div>
-
-    <!-- ROW 3: IQOS → VEEV -->
-    <div class="b1-label aud3">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <span class="cat-chip chip-iqos">IQOS</span>
-        <span style="font-size:11px;color:var(--gray-mid);text-align:center;">→</span>
-        <span class="cat-chip chip-veev">VEEV</span>
-      </div>
-    </div>
-    <div class="b1-cell"><div class="postit postit-yellow"><span class="postit-hint">Who is this user in your market?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-green"><span class="postit-hint">What works to drive this switch?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-pink"><span class="postit-hint">What blocks or fails?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-lavender"><span class="postit-hint">Message / moment that triggers them?</span></div></div>
-
-    <!-- ROW 4: ZYN → VEEV -->
-    <div class="b1-label aud4">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <span class="cat-chip chip-zyn">ZYN</span>
-        <span style="font-size:11px;color:var(--gray-mid);text-align:center;">→</span>
-        <span class="cat-chip chip-veev">VEEV</span>
-      </div>
-    </div>
-    <div class="b1-cell"><div class="postit postit-yellow"><span class="postit-hint">Who is this user in your market?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-green"><span class="postit-hint">What works to drive this switch?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-pink"><span class="postit-hint">What blocks or fails?</span></div></div>
-    <div class="b1-cell"><div class="postit postit-lavender"><span class="postit-hint">Message / moment that triggers them?</span></div></div>
-
-    <!-- ROW 5: VEEV → IQOS (last row — no bottom border) -->
-    <div class="b1-label aud5" style="border-bottom:none;">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <span class="cat-chip chip-veev">VEEV</span>
-        <span style="font-size:11px;color:var(--gray-mid);text-align:center;">→</span>
-        <span class="cat-chip chip-iqos">IQOS</span>
-      </div>
-    </div>
-    <div class="b1-cell" style="border-bottom:none;"><div class="postit postit-yellow"><span class="postit-hint">Who is this user in your market?</span></div></div>
-    <div class="b1-cell" style="border-bottom:none;"><div class="postit postit-green"><span class="postit-hint">What works to drive this switch?</span></div></div>
-    <div class="b1-cell" style="border-bottom:none;"><div class="postit postit-pink"><span class="postit-hint">What blocks or fails?</span></div></div>
-    <div class="b1-cell" style="border-bottom:none;"><div class="postit postit-lavender"><span class="postit-hint">Message / moment that triggers them?</span></div></div>
-
   </div>
 
   <div class="page-footer">
-    <span class="mc-logo">MC</span>
-    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
-    <span>Breakout 1 of 3</span>
+    <span class="footer-brand">MC</span>
+    <span class="footer-meta">MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span class="footer-num">Breakout 1 of 3</span>
   </div>
 </div>
-</div>
+</div><!-- /b1 -->
 
 
-<!-- ══════════════ BREAKOUT 2 ══════════════ -->
-<div id="t2" class="tab-content">
+<!-- ══════════════════════════════════════
+     BREAKOUT 2
+══════════════════════════════════════ -->
+<div class="breakout-panel" id="b2">
 <div class="page">
+
   <div class="page-header">
     <div>
-      <span class="breakout-badge badge-teal">Breakout 2 — Phase 1</span>
-      <h1 class="page-title">LAMPs &amp; Events: Beyond Brand Building — Capturing Leads Without Polluting the Experience</h1>
-      <div class="challenge-label">The Challenge</div>
-      <p class="challenge-text">LAMPs and events drive awareness and desirability — but how do we also capture the right leads and carry momentum forward into acquisition?</p>
+      <div class="eyebrow"><span class="eyebrow-dot" style="background:#d97706"></span>Breakout 2 — LAMPs &amp; Events</div>
+      <h1 class="challenge-statement" style="border-color:#d97706">LAMPs and events drive awareness and desirability — but how do we also capture the right leads and carry momentum forward into acquisition?</h1>
+      <div class="meta-row">
+        <span class="meta-pill">⏱ 75 min</span>
+        <span class="meta-pill">Day 2 · Afternoon</span>
+        <span class="meta-pill">4 moments</span>
+      </div>
     </div>
-    <div class="participants-block">
-      <div class="part-label">Participants</div>
-      <div class="part-list">
-        <div class="part-item"><span class="part-dot dot-teal"></span>Mohammed Emara <span class="part-country">— Egypt</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Imane Bennouna <span class="part-country">— Morocco</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Nikola Cvetkovic <span class="part-country">— Romania</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Marianna Cherubini <span class="part-country">— Spain</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Titika Dimakopoulou <span class="part-country">— Greece</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Karen Vazquez <span class="part-country">— Mexico</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>Jordan Guzman <span class="part-country">— Region 4</span></div>
-        <div class="part-item"><span class="part-dot dot-teal"></span>George Chatzidakis <span class="part-country">— Regional SME</span></div>
-      </div>
-      <div class="facilitators">
-        <div class="fac-label">Facilitator</div>
-        <div class="fac-pills"><span class="fac-pill">Gihad Ashmawy</span></div>
-      </div>
+    <div>
+      <div class="participants-label">Participants</div>
+      <div class="participant"><span>🇪🇬</span> <strong>Egypt</strong> — Mohammed Emara</div>
+      <div class="participant"><span>🇲🇦</span> <strong>Morocco</strong> — Imane Bennouna</div>
+      <div class="participant"><span>🇷🇴</span> <strong>Romania</strong> — Nikola Cvetkovic</div>
+      <div class="participant"><span>🇪🇸</span> <strong>Spain</strong> — Marianna Cherubini</div>
+      <div class="participant"><span>🇬🇷</span> <strong>Greece</strong> — Titika Dimakopoulou</div>
+      <div class="participant"><span>🇲🇽</span> <strong>Mexico</strong> — Karen Vazquez</div>
+      <div class="participant"><span>🌍</span> <strong>Region 4</strong> — Jordan Guzman</div>
+      <hr class="p-sep">
+      <div class="participants-label">Facilitator</div>
+      <div class="participant"><strong>Gihad Ashmawy</strong> · <strong>George Chatzidakis</strong> (SME)</div>
     </div>
   </div>
 
-  <div class="b2-stages">
-    <!-- Stage 1 -->
-    <div class="b2-stage b2-s1">
-      <div class="b2-stage-hdr">
-        <div class="b2-icon">✨</div>
-        <div class="b2-title">Brand Experience<br>&amp; Awareness</div>
-        <div class="b2-sub">The LAMP / event moment</div>
-      </div>
-      <div class="b2-divider"></div>
-      <div class="b2-body">
-        <div class="b2-row-label"><span class="b2-dot bdot-check"></span>We do well</div>
-        <div class="b2-zone z-green"><span class="postit-hint">What works at the brand experience level?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-cross"></span>Where we lose</div>
-        <div class="b2-zone z-red"><span class="postit-hint">Where does the experience fail to build intent?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-idea"></span>Idea to test</div>
-        <div class="b2-zone z-yellow"><span class="postit-hint">One improvement idea...</span></div>
-      </div>
+  <div class="moment-tabs">
+    <div class="moment-tab active" onclick="showMoment('b2m1','b2')">✨ Brand Experience &amp; Awareness</div>
+    <div class="moment-tab" onclick="showMoment('b2m2','b2')">💡 Moment of Interest</div>
+    <div class="moment-tab" onclick="showMoment('b2m3','b2')">🎯 Lead Capture</div>
+    <div class="moment-tab" onclick="showMoment('b2m4','b2')">📲 Post-Event Follow-up</div>
+  </div>
+
+  <div class="moment-panel active" id="b2m1">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">✨ Brand Experience &amp; Awareness</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">The LAMP / event moment</div>
     </div>
-    <!-- Stage 2 -->
-    <div class="b2-stage b2-s2">
-      <div class="b2-stage-hdr">
-        <div class="b2-icon">💡</div>
-        <div class="b2-title">Moment of<br>Interest</div>
-        <div class="b2-sub">Consumer engagement peak</div>
-      </div>
-      <div class="b2-divider"></div>
-      <div class="b2-body">
-        <div class="b2-row-label"><span class="b2-dot bdot-check"></span>We do well</div>
-        <div class="b2-zone z-green"><span class="postit-hint">How do you capitalise on peak engagement?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-cross"></span>Where we lose</div>
-        <div class="b2-zone z-red"><span class="postit-hint">Where does interest fade without action?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-idea"></span>Idea to test</div>
-        <div class="b2-zone z-yellow"><span class="postit-hint">One improvement idea...</span></div>
-      </div>
+    <div class="b2-cols">
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--teal)">We do well ✓</div><textarea class="write-area" style="min-height:200px" placeholder="What works at the brand experience level?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--red)">Where we lose ✗</div><textarea class="write-area" style="min-height:200px" placeholder="Where does the experience fail to build intent?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--purple)">Idea to test 💡</div><textarea class="write-area" style="min-height:200px" placeholder="One improvement idea..."></textarea></div>
     </div>
-    <!-- Stage 3 -->
-    <div class="b2-stage b2-s3">
-      <div class="b2-stage-hdr">
-        <div class="b2-icon">🎯</div>
-        <div class="b2-title">Lead<br>Capture</div>
-        <div class="b2-sub">Consent, data, contact</div>
-      </div>
-      <div class="b2-divider"></div>
-      <div class="b2-body">
-        <div class="b2-row-label"><span class="b2-dot bdot-check"></span>We do well</div>
-        <div class="b2-zone z-green"><span class="postit-hint">How do you capture leads at events?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-cross"></span>Where we lose</div>
-        <div class="b2-zone z-red"><span class="postit-hint">Where do leads slip — unregistered, low quality?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-idea"></span>Idea to test</div>
-        <div class="b2-zone z-yellow"><span class="postit-hint">One improvement idea...</span></div>
-      </div>
+  </div>
+
+  <div class="moment-panel" id="b2m2">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">💡 Moment of Interest</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Consumer engagement peak</div>
     </div>
-    <!-- Stage 4 -->
-    <div class="b2-stage b2-s4">
-      <div class="b2-stage-hdr">
-        <div class="b2-icon">📲</div>
-        <div class="b2-title">Post-Event<br>Follow-up</div>
-        <div class="b2-sub">Nurture &amp; convert</div>
-      </div>
-      <div class="b2-divider"></div>
-      <div class="b2-body">
-        <div class="b2-row-label"><span class="b2-dot bdot-check"></span>We do well</div>
-        <div class="b2-zone z-green"><span class="postit-hint">What follow-up journey exists today?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-cross"></span>Where we lose</div>
-        <div class="b2-zone z-red"><span class="postit-hint">Where do post-event leads go cold?</span></div>
-        <div class="b2-row-label" style="margin-top:4px;"><span class="b2-dot bdot-idea"></span>Idea to test</div>
-        <div class="b2-zone z-yellow"><span class="postit-hint">One improvement idea...</span></div>
-      </div>
+    <div class="b2-cols">
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--teal)">We do well ✓</div><textarea class="write-area" style="min-height:200px" placeholder="How do you capitalise on peak engagement?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--red)">Where we lose ✗</div><textarea class="write-area" style="min-height:200px" placeholder="Where does interest fade without action?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--purple)">Idea to test 💡</div><textarea class="write-area" style="min-height:200px" placeholder="One improvement idea..."></textarea></div>
+    </div>
+  </div>
+
+  <div class="moment-panel" id="b2m3">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">🎯 Lead Capture</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Consent, data, contact</div>
+    </div>
+    <div class="b2-cols">
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--teal)">We do well ✓</div><textarea class="write-area" style="min-height:200px" placeholder="How do you capture leads at events?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--red)">Where we lose ✗</div><textarea class="write-area" style="min-height:200px" placeholder="Where do leads slip — unregistered, low quality?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--purple)">Idea to test 💡</div><textarea class="write-area" style="min-height:200px" placeholder="One improvement idea..."></textarea></div>
+    </div>
+  </div>
+
+  <div class="moment-panel" id="b2m4">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">📲 Post-Event Follow-up</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Nurture &amp; convert</div>
+    </div>
+    <div class="b2-cols">
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--teal)">We do well ✓</div><textarea class="write-area" style="min-height:200px" placeholder="What follow-up journey exists today?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--red)">Where we lose ✗</div><textarea class="write-area" style="min-height:200px" placeholder="Where do post-event leads go cold?"></textarea></div>
+      <div class="b2-col"><div class="b2-col-label" style="color:var(--purple)">Idea to test 💡</div><textarea class="write-area" style="min-height:200px" placeholder="One improvement idea..."></textarea></div>
     </div>
   </div>
 
   <div class="page-footer">
-    <span class="mc-logo">MC</span>
-    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
-    <span>Breakout 2 of 3</span>
+    <span class="footer-brand">MC</span>
+    <span class="footer-meta">MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span class="footer-num">Breakout 2 of 3</span>
   </div>
 </div>
-</div>
+</div><!-- /b2 -->
 
 
-<!-- ══════════════ BREAKOUT 3 ══════════════ -->
-<div id="t3" class="tab-content">
+<!-- ══════════════════════════════════════
+     BREAKOUT 3
+══════════════════════════════════════ -->
+<div class="breakout-panel" id="b3">
 <div class="page">
+
   <div class="page-header">
     <div>
-      <span class="breakout-badge badge-amber">Breakout 3 — Phase 1</span>
-      <h1 class="page-title">Leads: What Breaks the Journey and How to Enhance It</h1>
-      <div class="challenge-label">The Challenge</div>
-      <p class="challenge-text">After generating leads, how do we qualify, hand off, and move people forward — without losing them along the way?</p>
-    </div>
-    <div class="participants-block">
-      <div class="part-label">Participants</div>
-      <div class="part-list">
-        <div class="part-item"><span class="part-dot dot-amber"></span>Raymond Nassar <span class="part-country">— Egypt</span></div>
-        <div class="part-item"><span class="part-dot dot-amber"></span>Ansab Junaid <span class="part-country">— Canada</span></div>
-        <div class="part-item"><span class="part-dot dot-amber"></span>Yasser Yunis <span class="part-country">— Regional SME</span></div>
-        <div class="part-item"><span class="part-dot dot-amber"></span>Fernanda Ocampo <span class="part-country">— Mexico</span></div>
-        <div class="part-item"><span class="part-dot dot-amber"></span>Stephanie Madacs <span class="part-country">— Austria</span></div>
-        <div class="part-item"><span class="part-dot dot-amber"></span>Michalis Kafatsakis <span class="part-country">— Greece</span></div>
-      </div>
-      <div class="facilitators">
-        <div class="fac-label">Facilitators</div>
-        <div class="fac-pills"><span class="fac-pill">Carine Friou</span><span class="fac-pill">Mariola Sasinowska</span></div>
+      <div class="eyebrow"><span class="eyebrow-dot" style="background:var(--teal)"></span>Breakout 3 — Lead Journey</div>
+      <h1 class="challenge-statement" style="border-color:var(--teal)">After generating leads, how do we qualify, hand off, and move people forward — without losing them along the way?</h1>
+      <div class="meta-row">
+        <span class="meta-pill">⏱ 75 min</span>
+        <span class="meta-pill">Day 2 · Afternoon</span>
+        <span class="meta-pill">5 journey stages</span>
       </div>
     </div>
-  </div>
-
-  <!-- Pipeline -->
-  <div class="b3-pipeline">
-    <div class="b3-stage b3-s1">Lead Generated<div class="b3-stage-sub">Source &amp; volume</div></div>
-    <div class="b3-stage b3-s2">Qualified?<div class="b3-stage-sub">Criteria &amp; scoring</div></div>
-    <div class="b3-stage b3-s3">Handed Off<div class="b3-stage-sub">CRM / team transfer</div></div>
-    <div class="b3-stage b3-s4">Engaged<div class="b3-stage-sub">Follow-up &amp; nurture</div></div>
-    <div class="b3-stage b3-s5">Converted or Lost<div class="b3-stage-sub">Final outcome</div></div>
-  </div>
-
-  <!-- Band 1: What breaks -->
-  <div class="b3-band"><span class="b3-band-dot" style="background:#E04B4B;"></span><span class="b3-band-label">🔴 What breaks here</span><span class="b3-band-sep">|</span><span class="b3-band-sub">Pain points, drop-offs, failures</span></div>
-  <div class="b3-matrix bg-red">
-    <div class="b3-col">
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
-      <div class="b3-p pink"><span class="b3-hint">Break point...</span></div>
+    <div>
+      <div class="participants-label">Participants</div>
+      <div class="participant"><span>🇪🇬</span> <strong>Egypt</strong> — Raymond Nassar</div>
+      <div class="participant"><span>🇨🇦</span> <strong>Canada</strong> — Ansab Junaid</div>
+      <div class="participant"><span>🇲🇽</span> <strong>Mexico</strong> — Fernanda Ocampo</div>
+      <div class="participant"><span>🇦🇹</span> <strong>Austria</strong> — Stephanie Madacs</div>
+      <div class="participant"><span>🇬🇷</span> <strong>Greece</strong> — Michalis Kafatsakis</div>
+      <div class="participant"><span>🌍</span> <strong>Regional SME</strong> — Yasser Yunis</div>
+      <hr class="p-sep">
+      <div class="participants-label">Facilitators</div>
+      <div class="participant"><strong>Carine Friou</strong> · <strong>Mariola Sasinowska</strong></div>
     </div>
   </div>
 
-  <!-- Band 2: What helps -->
-  <div class="b3-band"><span class="b3-band-dot" style="background:#3DBF6A;"></span><span class="b3-band-label">🟢 What helps here</span><span class="b3-band-sep">|</span><span class="b3-band-sub">Best practices from your market</span></div>
-  <div class="b3-matrix bg-green">
-    <div class="b3-col">
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
+  <div class="moment-tabs">
+    <div class="moment-tab active" onclick="showMoment('b3s1','b3')">Lead Generated</div>
+    <div class="moment-tab" onclick="showMoment('b3s2','b3')">Qualified?</div>
+    <div class="moment-tab" onclick="showMoment('b3s3','b3')">Handed Off</div>
+    <div class="moment-tab" onclick="showMoment('b3s4','b3')">Engaged</div>
+    <div class="moment-tab" onclick="showMoment('b3s5','b3')">Converted or Lost</div>
+  </div>
+
+  <!-- helper macro for each stage -->
+  <div class="moment-panel active" id="b3s1">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">Lead Generated</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Source &amp; volume</div>
     </div>
-    <div class="b3-col">
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-    </div>
-    <div class="b3-col">
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
-      <div class="b3-p green"><span class="b3-hint">What works...</span></div>
+    <div class="b3-rows">
+      <div class="b3-row-head" style="background:var(--red-light);color:var(--red)">🔴 What breaks here — pain points, drop-offs, failures</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Break point..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--teal-light);color:var(--teal)">🟢 What helps here — best practices from your market</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="What works..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--purple-light);color:var(--purple)">💡 What we'd change — ideas, fixes, innovations to test</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Idea / fix..."></textarea></div>
     </div>
   </div>
 
-  <!-- Band 3: What we'd change -->
-  <div class="b3-band"><span class="b3-band-dot" style="background:#F5C242;"></span><span class="b3-band-label">💡 What we'd change</span><span class="b3-band-sep">|</span><span class="b3-band-sub">Ideas, fixes, innovations to test</span></div>
-  <div class="b3-matrix bg-yellow">
-    <div class="b3-col">
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
+  <div class="moment-panel" id="b3s2">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">Qualified?</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Criteria &amp; scoring</div>
     </div>
-    <div class="b3-col">
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
+    <div class="b3-rows">
+      <div class="b3-row-head" style="background:var(--red-light);color:var(--red)">🔴 What breaks here — pain points, drop-offs, failures</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Break point..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--teal-light);color:var(--teal)">🟢 What helps here — best practices from your market</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="What works..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--purple-light);color:var(--purple)">💡 What we'd change — ideas, fixes, innovations to test</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Idea / fix..."></textarea></div>
     </div>
-    <div class="b3-col">
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
+  </div>
+
+  <div class="moment-panel" id="b3s3">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">Handed Off</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">CRM / team transfer</div>
     </div>
-    <div class="b3-col">
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
+    <div class="b3-rows">
+      <div class="b3-row-head" style="background:var(--red-light);color:var(--red)">🔴 What breaks here — pain points, drop-offs, failures</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Break point..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--teal-light);color:var(--teal)">🟢 What helps here — best practices from your market</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="What works..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--purple-light);color:var(--purple)">💡 What we'd change — ideas, fixes, innovations to test</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Idea / fix..."></textarea></div>
     </div>
-    <div class="b3-col">
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
-      <div class="b3-p yellow"><span class="b3-hint">Idea / fix...</span></div>
+  </div>
+
+  <div class="moment-panel" id="b3s4">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">Engaged</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Follow-up &amp; nurture</div>
+    </div>
+    <div class="b3-rows">
+      <div class="b3-row-head" style="background:var(--red-light);color:var(--red)">🔴 What breaks here — pain points, drop-offs, failures</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Break point..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--teal-light);color:var(--teal)">🟢 What helps here — best practices from your market</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="What works..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--purple-light);color:var(--purple)">💡 What we'd change — ideas, fixes, innovations to test</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Idea / fix..."></textarea></div>
+    </div>
+  </div>
+
+  <div class="moment-panel" id="b3s5">
+    <div style="padding:16px 40px 12px;border-bottom:1px solid var(--rule);background:var(--bg)">
+      <div style="font-size:15px;font-weight:600;color:var(--ink)">Converted or Lost</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Final outcome</div>
+    </div>
+    <div class="b3-rows">
+      <div class="b3-row-head" style="background:var(--red-light);color:var(--red)">🔴 What breaks here — pain points, drop-offs, failures</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Break point..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--teal-light);color:var(--teal)">🟢 What helps here — best practices from your market</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="What works..."></textarea></div>
+      <div class="b3-row-head" style="background:var(--purple-light);color:var(--purple)">💡 What we'd change — ideas, fixes, innovations to test</div>
+      <div class="b3-row-body"><textarea class="write-area" style="min-height:100px" placeholder="Idea / fix..."></textarea></div>
     </div>
   </div>
 
   <div class="page-footer">
-    <span class="mc-logo">MC</span>
-    <span>MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
-    <span>Breakout 3 of 3</span>
+    <span class="footer-brand">MC</span>
+    <span class="footer-meta">MC Acquisition Workshop · Lausanne, June 24 2026 · CONFIDENTIAL — for PMI SFPs only</span>
+    <span class="footer-num">Breakout 3 of 3</span>
   </div>
 </div>
-</div>
+</div><!-- /b3 -->
+
+</div><!-- /canvas-wrapper -->
 
 <script>
-function showTab(id, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
+  function showBreakout(id) {
+    document.querySelectorAll('.breakout-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+  }
+
+  function showExTab(id, breakout) {
+    const page = document.getElementById(breakout);
+    page.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    page.querySelectorAll('.ex-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const tabs = page.querySelectorAll('.ex-tab');
+    const panels = page.querySelectorAll('.tab-panel');
+    panels.forEach((p, i) => { if (p.id === id) tabs[i].classList.add('active'); });
+  }
+
+  function showMoment(id, breakout) {
+    const page = document.getElementById(breakout);
+    page.querySelectorAll('.moment-panel').forEach(p => p.classList.remove('active'));
+    page.querySelectorAll('.moment-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const tabs = page.querySelectorAll('.moment-tab');
+    const panels = page.querySelectorAll('.moment-panel');
+    panels.forEach((p, i) => { if (p.id === id) tabs[i].classList.add('active'); });
+  }
 </script>
 </body>
 </html>

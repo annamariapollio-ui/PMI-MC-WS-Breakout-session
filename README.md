@@ -1,44 +1,27 @@
-# MC Acquisition Workshop — Breakout Canvases
+# PMI MC Acquisition Workshop — Breakout Canvases
 
-Interactive, printable workshop canvases for the MC Acquisition Workshop (Lausanne, June 24 2026).
+Interactive breakout canvas for the MC Acquisition Workshop (Lausanne, June 24 2026).
 
-## What's inside
+## Structure
 
-Three breakout room canvases, each with:
-- Challenge statement & participant list
-- Interactive post-it zones for group discussion
-- Pre-seeded market benchmark insights
-- Print-ready layout (A3 landscape recommended)
+```
+pmi-mc-ws-breakout-session/
+├── index.html   # All three breakout canvases in a single file
+└── README.md
+```
 
-| Breakout | Theme |
-|----------|-------|
-| 1 | MC Navigation: Which Category, to Whom, When & Where |
-| 2 | LAMPs & Events: Beyond Brand Building into Acquisition |
-| 3 | Leads: What Breaks the Journey and How to Enhance It |
+## Breakouts
 
-## How to use
+- **Breakout 1 — MC Navigation** · 3 tabbed exercises (Manned channels, Unmanned channels, Enhancements)
+- **Breakout 2 — LAMPs & Events** · 4 tabbed moments (Brand Experience, Moment of Interest, Lead Capture, Post-Event Follow-up)
+- **Breakout 3 — Lead Journey** · 5 tabbed pipeline stages (Generated → Qualified → Handed Off → Engaged → Converted/Lost)
 
-### Online
-Visit the deployed URL. Use the tabs to switch between breakout rooms.
+## Deployment
 
-### Print
-1. Open in Chrome or Edge
-2. Click **"Print all"** (top right)
-3. Set paper size to **A3 landscape** (or A4 landscape)
-4. Enable **Background graphics** in print settings
-5. Print one page per breakout room
+Deploy as a static site on Vercel, Netlify, or GitHub Pages — no build step required.
 
-Participants use real post-its to fill in the blank zones during the workshop.
+For Vercel: connect the repo and set the root directory to `/` (or this folder). `index.html` will be served automatically.
 
-## Deploy on Vercel
+## Confidentiality
 
-1. Push this folder to a GitHub repository
-2. Go to [vercel.com](https://vercel.com) → New Project
-3. Import the GitHub repo
-4. Vercel auto-detects static — click **Deploy**
-
-No build step required.
-
----
-
-CONFIDENTIAL — For the commercialisation of PMI's SFPs only.
+CONFIDENTIAL — for PMI SFPs only. Do not share or distribute outside authorised PMI employees and consultants.
